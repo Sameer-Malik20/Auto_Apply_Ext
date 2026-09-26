@@ -1,0 +1,28 @@
+# .pre-commit-config.yaml
+# Run all checks via Docker: docker compose -f config/docker-compose.yml run --rm test
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: check-added-large-files
+  - repo: local
+    hooks:
+      - id: docker-lint
+        name: lint (docker)
+        language: system
+        entry: docker compose -f config/docker-compose.yml run --rm lint
+        pass_filenames: false
+        stages: [pre-commit]
+      - id: docker-test
+        name: unit tests (docker)
+        language: system
+        entry: docker compose -f config/docker-compose.yml run --rm test
+        pass_filenames: false
+        stages: [pre-push]
